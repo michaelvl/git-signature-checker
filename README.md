@@ -94,3 +94,9 @@ Next, run the signature checker with a Git repository and your list of trusted p
 ```sh
 docker run --rm -v $PWD/public-keys:/public-keys:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker
 ```
+
+## A Note on Public Keys
+
+This tool does not validate the public keys or any trust between
+them. Obviously, strong attention to key management is a prerequisite for
+validating Git integrity with signatures.
