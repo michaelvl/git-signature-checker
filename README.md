@@ -114,7 +114,7 @@ be trusted. You can export your public GIt GPG key as follows, but note that you
 need all public keys that are considered valid keys for signing:
 
 ```sh
-gpg --armor --export user@acme.com > joe-pub-key.asc
+gpg --armor --export user@example.com > user-pub-key.asc
 ```
 
 Next, run the signature checker with a Git repository and your list of trusted public keys as follows:
@@ -123,11 +123,20 @@ Next, run the signature checker with a Git repository and your list of trusted p
 docker run --rm -v $PWD/public-keys:/public-keys:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker
 ```
 
+By default, the checker will validate all commits on the current revision of the
+given repository. Use the argument `--revision-range` for checking alternative
+references and sub-trees.
+
 ## A Note on Public Keys
 
-This tool does not validate the public keys or any trust between
-them. Obviously, strong attention to key management is a prerequisite for
-validating Git integrity with signatures.
+This tool does not validate the public keys imported through the path given by
+`--public-keys`.  Trust beween keys and required trust level can be defined by
+using `--keyring` to use a specific GPG keyring with keys with defined trust and
+`--minimum-trust` can be used to specify the minimum key trust level required
+for a succesfull signature validation.
+
+Obviously, strong attention to key management is a prerequisite for validating
+Git integrity with signatures.
 
 ## Caveates with Github Merges Through the Web UI
 
