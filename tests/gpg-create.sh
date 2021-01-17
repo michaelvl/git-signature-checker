@@ -6,15 +6,22 @@ PUBKEYS=${PUBLIC_KEYS_PATH:-/public-keys}
 
 
 function create_key {
+    name=$1
+    email=$2
+    comment=$3
     cat >foo <<EOF
-     %echo Generating a basic OpenPGP key for $2
+     %echo Generating a basic OpenPGP key for $name
      Key-Type: DSA
      Key-Length: 1024
      Subkey-Type: ELG-E
      Subkey-Length: 1024
-     Name-Real: $1
-     Name-Comment: A personal key for $2
-     Name-Email: $2
+     Name-Real: $name
+EOF
+    if [ ! -z $comment ]; then
+        echo "Name-Comment: $comment" >> foo
+    fi
+    cat >>foo <<EOF
+     Name-Email: $email
      Expire-Date: 0
      #Passphrase: ""
      %no-protection
@@ -27,7 +34,7 @@ EOF
 }
 
 create_key "James"   "james@example.com"
-create_key "Frank"   "frank@example.com"
+create_key "Frank"   "frank@example.com"   "A personal key for Frank"
 create_key "William" "william@example.com"
 
 gpg --list-keys

@@ -113,14 +113,21 @@ The checker needs a directory with public keys for all signing keys that should
 be trusted. You can export your public GIt GPG key as follows, but note that you
 need all public keys that are considered valid keys for signing:
 
-```sh
-gpg --armor --export user@example.com > user-pub-key.asc
+```console
+$ gpg --armor --export user@example.com > user-pub-key.asc
 ```
 
 Next, run the signature checker with a Git repository and your list of trusted public keys as follows:
 
-```sh
-docker run --rm -v $PWD/public-keys:/public-keys:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker
+```console
+$ docker run --rm -v $PWD/public-keys:/public-keys:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker
+```
+
+Alternatively, to use an existing GPG keyring, potentially with trust assigned
+to keys, use the following:
+
+```console
+$ docker run --rm -v $HOME/.gnupg:/gnupghome:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker --git-dir /repo --keyring /gnupghome
 ```
 
 By default, the checker will validate all commits on the current revision of the

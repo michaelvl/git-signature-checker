@@ -71,7 +71,8 @@ def gpg_trust_txt2lvl(trust):
 
 def parse_git_verify_commit_output(out):
     stat = {}
-    goodsig = re.compile(b'\[GNUPG:\] GOODSIG [0-9A-Z]+\s([\w\s]+\w)\s+\(.*\)\s+\<([\w\@\.]+)\>')
+    goodsig = re.compile(b'\[GNUPG:\] GOODSIG [0-9A-Z]+\s+([\w\s]+\w)\s+(.*)')
+    goodsig_email = re.compile(b'.*\<([\w\@\.]+)\>')
     validsig = re.compile(b'\[GNUPG:\] VALIDSIG ([0-9A-Z]+)\s.*')
     trust = re.compile(b'\[GNUPG:\] TRUST_(\w+)\s.*')
     for ln in out.split(b'\n'):
@@ -79,7 +80,9 @@ def parse_git_verify_commit_output(out):
         r = goodsig.match(ln)
         if r:
             stat['by'] = r.group(1)
-            stat['email'] = r.group(2)
+            r = goodsig_email.match(r.group(2))
+            if r:
+                stat['email'] = r.group(1)
         r = validsig.match(ln)
         if r:
             stat['validsig'] = True
@@ -121,7 +124,11 @@ def check_git_signatures(args, commits, fingerprints):
             sys.exit(-1)
         verify_stat = parse_git_verify_commit_output(ret.stderr)
         if validate_signature(args, commit, verify_stat, fingerprints):
-            logging.info('OK: Commit {}: {} (trust:{})'.format(commit, verify_stat['email'], verify_stat['trust']))
+            if 'email' in verify_stat:
+                by = verify_stat['email']
+            else:
+                by = verify_stat['by']
+            logging.info('OK: Commit {}: {} (trust:{})'.format(commit, by, verify_stat['trust']))
         else:
             logging.error('FAILURE: Commit {} could not be verified'.format(commit))
             sys.exit(-1)
