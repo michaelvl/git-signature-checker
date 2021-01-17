@@ -132,7 +132,7 @@ def check_git_signatures(args, commits, fingerprints):
         else:
             logging.error('FAILURE: Commit {} could not be verified'.format(commit))
             sys.exit(-1)
-    logging.info('All {} commit signatures validated'.format(len(commits)))
+    logging.info('All {} commit signatures validated (trust level {})'.format(len(commits), args. minimum_trust))
 
 def main():
     parser = argparse.ArgumentParser(description='Git GPG signature checker')
