@@ -127,7 +127,7 @@ Alternatively, to use an existing GPG keyring, potentially with trust assigned
 to keys, use the following:
 
 ```console
-$ docker run --rm -v $HOME/.gnupg:/gnupghome:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker --git-dir /repo --keyring /gnupghome
+$ docker run --rm -v $HOME/.gnupg:/gnupghome:ro -v $PWD/.git:/repo:ro michaelvl/git-signature-checker --git-dir /repo --keyring /gnupghome --minimum-trust ULTIMATE
 ```
 
 By default, the checker will validate all commits on the current revision of the
